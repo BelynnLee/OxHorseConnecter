@@ -8,6 +8,8 @@ interface DirPickerProps {
   onSelect?: (path: string) => void;
   browseStartPath?: string;
   browseDeviceId?: string;
+  browseDisabled?: boolean;
+  browseDisabledTitle?: string;
   selectedValue?: string;
   disabled?: boolean;
   placeholder?: string;
@@ -108,6 +110,8 @@ export default function DirPicker({
   onSelect,
   browseStartPath,
   browseDeviceId,
+  browseDisabled,
+  browseDisabledTitle,
   selectedValue,
   disabled,
   placeholder,
@@ -160,7 +164,7 @@ export default function DirPicker({
   }, [browseDeviceId, t.dirPicker.errorBrowse]);
 
   function openPicker() {
-    if (disabled) return;
+    if (disabled || browseDisabled) return;
     browseDeviceIdRef.current = browseDeviceId;
     setOpen(true);
     load(browseStartPath || value || undefined);
@@ -286,10 +290,10 @@ export default function DirPicker({
         <button
           type="button"
           onClick={openPicker}
-          disabled={disabled}
+          disabled={disabled || browseDisabled}
           aria-expanded={open}
           aria-label={browseAriaLabel ?? t.dirPicker.browse}
-          title={t.dirPicker.browse}
+          title={browseDisabled ? browseDisabledTitle ?? t.dirPicker.browse : t.dirPicker.browse}
           className={
             buttonClassName ??
             'btn-secondary h-10 px-3 text-sm font-medium gap-1.5 flex items-center whitespace-nowrap'

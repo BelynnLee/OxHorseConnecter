@@ -6,3 +6,6 @@ and validated by [`../../agent-workbench-acceptance.md`](../../agent-workbench-a
 
 - [Release notes](release-notes.md)
 - [Acceptance record](acceptance.md)
+- [Release checklist](release-checklist.md)
+- [Demo script](demo-script.md)
+

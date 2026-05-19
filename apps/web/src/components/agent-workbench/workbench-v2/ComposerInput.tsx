@@ -295,14 +295,17 @@ function ComposerSettings({
   const extraDirBrowseStart = extraDirs.length
     ? extraDirs[extraDirs.length - 1]
     : projectBrowseStart;
+  const bridgeNotReady = selectedDevice?.bridgeStatus === 'disconnected';
   const browseDeviceId =
     apiSource === 'mock' || selectedDevice?.bridgeStatus !== 'connected'
       ? undefined
       : deviceId || undefined;
+  const browseDisabledTitle = bridgeNotReady
+    ? 'Remote workspace bridge is not connected.'
+    : undefined;
   const appendExtraDir = (pathValue: string) => {
     updateRuntime({ extraDirs: appendUniquePath(extraDirs, pathValue) });
   };
-  const bridgeNotReady = selectedDevice?.bridgeStatus === 'disconnected';
   const deviceTitle = selectedDevice
     ? `${selectedDevice.name} - ${t.workbench.deviceStatus[selectedDevice.status]}${selectedDevice.trusted ? '' : ` - ${t.workbench.onlineButUntrusted}`}${selectedDevice.workRoot && selectedDevice.workRootExists !== false ? '' : ' - workspace not ready'}${bridgeNotReady ? ' - workspace bridge disconnected' : ''}`
     : t.workbench.v2.autoDevice;
@@ -336,6 +339,8 @@ function ComposerSettings({
                 value={projectPath}
                 onChange={onProjectPathChange}
                 disabled={projectPathLocked}
+                browseDisabled={bridgeNotReady}
+                browseDisabledTitle={browseDisabledTitle}
                 browseStartPath={projectBrowseStart}
                 browseDeviceId={browseDeviceId}
                 placeholder={t.workbench.header.projectPathPlaceholder}
@@ -409,6 +414,8 @@ function ComposerSettings({
                 onSelect={appendExtraDir}
                 browseStartPath={extraDirBrowseStart}
                 browseDeviceId={browseDeviceId}
+                browseDisabled={bridgeNotReady}
+                browseDisabledTitle={browseDisabledTitle}
                 selectedValue={extraDirs[extraDirs.length - 1]}
                 browseAriaLabel={t.workbench.v2.extraDirectories}
                 showBrowseLabel={false}

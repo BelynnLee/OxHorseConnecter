@@ -127,6 +127,7 @@ export default function DirPicker({
   const containerRef = useRef<HTMLDivElement>(null);
   const loadIdRef = useRef(0);
   const startPathRef = useRef<string | undefined>(browseStartPath || value || undefined);
+  const browseDeviceIdRef = useRef<string | undefined>(browseDeviceId);
 
   const load = useCallback(async (dirPath?: string) => {
     const loadId = loadIdRef.current + 1;
@@ -160,6 +161,7 @@ export default function DirPicker({
 
   function openPicker() {
     if (disabled) return;
+    browseDeviceIdRef.current = browseDeviceId;
     setOpen(true);
     load(browseStartPath || value || undefined);
   }
@@ -203,7 +205,12 @@ export default function DirPicker({
   }, [open]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      browseDeviceIdRef.current = browseDeviceId;
+      return;
+    }
+    if (browseDeviceIdRef.current === browseDeviceId) return;
+    browseDeviceIdRef.current = browseDeviceId;
     load(startPathRef.current);
   }, [browseDeviceId, load, open]);
 

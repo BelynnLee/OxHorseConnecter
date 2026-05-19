@@ -1,0 +1,42 @@
+{
+  "name": "@rac/host",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm -s -w build:packages && tsx watch --exclude \"../../packages/**/dist/**\" src/index.ts",
+    "remote:dev": "pnpm -s -w build:packages && tsx src/remote-worker.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "remote:start": "node dist/remote-worker.js",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.2.126",
+    "@rac/executors": "workspace:*",
+    "@rac/logger": "workspace:*",
+    "@rac/security": "workspace:*",
+    "@rac/shared": "workspace:*",
+    "@rac/storage": "workspace:*",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.0",
+    "express": "^4.21.0",
+    "grammy": "^1.42.0",
+    "node-pty": "^1.1.0",
+    "uuid": "^10.0.0",
+    "web-push": "^3.6.7",
+    "ws": "^8.20.0",
+    "zod": "4.0.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.0",
+    "@types/cors": "^2.8.0",
+    "@types/express": "^4.17.0",
+    "@types/uuid": "^10.0.0",
+    "@types/web-push": "^3.6.4",
+    "@types/ws": "^8.18.1",
+    "rimraf": "^5.0.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.4.0"
+  }
+}

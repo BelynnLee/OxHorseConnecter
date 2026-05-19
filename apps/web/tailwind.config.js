@@ -1,0 +1,87 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  theme: {
+    extend: {
+      colors: {
+        'background-base': 'var(--background-base)',
+        'midground': 'var(--midground)',
+        'foreground': 'var(--foreground)',
+        'card': 'var(--color-card)',
+        'card-foreground': 'var(--color-card-foreground)',
+        'muted': 'var(--color-muted)',
+        'muted-foreground': 'var(--color-muted-foreground)',
+        'primary': 'var(--color-primary)',
+        'primary-foreground': 'var(--color-primary-foreground)',
+        'secondary': 'var(--color-secondary)',
+        'secondary-foreground': 'var(--color-secondary-foreground)',
+        'destructive': 'var(--color-destructive)',
+        'input': 'var(--color-input)',
+        'ring': 'var(--color-ring)',
+        'border': 'var(--color-border)',
+        // Surfaces — no opacity needed, use direct CSS var
+        'bg-app':       'var(--bg-app)',
+        'bg-surface-1': 'var(--bg-surface-1)',
+        'bg-surface-2': 'var(--bg-surface-2)',
+        'bg-surface-3': 'var(--bg-surface-3)',
+        // Borders
+        'border-default': 'var(--border-default)',
+        'border-soft':    'var(--border-soft)',
+        'border-subtle':  'var(--border-soft)',
+        'border-strong':  'var(--border-strong)',
+        // Text — no opacity needed
+        'text-primary':   'var(--text-primary)',
+        'text-secondary': 'var(--text-secondary)',
+        'text-tertiary':  'var(--text-tertiary)',
+        'text-disabled':  'var(--text-disabled)',
+        // Accent — needs opacity support (bg-accent/10 etc.)
+        'accent':       'rgb(var(--accent) / <alpha-value>)',
+        'accent-hover': 'var(--accent-hover)',
+        'accent-soft':  'var(--accent-soft)',
+        // Status colors — need opacity support
+        'success':      'rgb(var(--success) / <alpha-value>)',
+        'success-soft': 'var(--success-soft)',
+        'warning':      'rgb(var(--warning) / <alpha-value>)',
+        'warning-soft': 'var(--warning-soft)',
+        'danger':       'rgb(var(--danger) / <alpha-value>)',
+        'danger-soft':  'var(--danger-soft)',
+        'info':         'rgb(var(--info) / <alpha-value>)',
+        'info-soft':    'var(--info-soft)',
+      },
+      fontFamily: {
+        sans: ['var(--font-sans)'],
+        mono: ['var(--font-mono)'],
+        mondwest: ['var(--font-sans)'],
+        expanded: ['var(--font-sans)'],
+        courier: ['var(--font-mono)'],
+      },
+      fontSize: {
+        'xs':   ['12px', '18px'],
+        'sm':   ['13px', '20px'],
+        'md':   ['14px', '22px'],
+        'base': ['15px', '24px'],
+        'lg':   ['18px', '28px'],
+        'xl':   ['20px', '30px'],
+        '2xl':  ['24px', '34px'],
+      },
+      borderRadius: {
+        'xs':   '6px',
+        'sm':   '8px',
+        'md':   '12px',
+        'lg':   '16px',
+        'xl':   '20px',
+        'pill': '999px',
+      },
+      boxShadow: {
+        'sm': '0 1px 2px rgba(0,0,0,0.18)',
+        'md': '0 8px 24px rgba(0,0,0,0.24)',
+        'lg': '0 16px 40px rgba(0,0,0,0.32)',
+      },
+      transitionDuration: {
+        '140': '140ms',
+        '200': '200ms',
+      },
+    },
+  },
+  plugins: [],
+};

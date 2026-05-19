@@ -1,0 +1,109 @@
+# Remote Agent Console - Nginx Reverse Proxy Example
+#
+# Usage:
+#   1. Replace `console.example.com` with your actual domain.
+#   2. Provide TLS certificates (Let's Encrypt / certbot recommended).
+#   3. Adjust `proxy_pass` upstream port if Host listens elsewhere (default 3001).
+#   4. Place built web assets at /var/www/rac-web (= apps/web/dist).
+#
+# This config:
+#   - Terminates TLS, forces HTTPS, sets HSTS
+#   - Proxies /api/* and /api/stream (SSE) to Host
+#   - Proxies /api/.../ws (WebSocket) with Upgrade headers
+#   - Serves the built Web SPA from a static directory
+#   - Sets X-Forwarded-* headers (Host must run with TRUST_PROXY=true)
+
+# Optional: rate-limit auth endpoints to slow brute-force attempts
+limit_req_zone $binary_remote_addr zone=rac_auth:10m rate=10r/m;
+
+# HTTP -> HTTPS redirect
+server {
+    listen 80;
+    listen [::]:80;
+    server_name console.example.com;
+
+    # Allow ACME http-01 challenge for cert renewal
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+# HTTPS server
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name console.example.com;
+
+    # TLS certificates (replace with your paths)
+    ssl_certificate     /etc/letsencrypt/live/console.example.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/console.example.com/privkey.pem;
+
+    # Modern TLS only
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers on;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 1d;
+
+    # HSTS — only enable after confirming HTTPS works on all subdomains
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+    # Increase body size for file uploads / large prompts
+    client_max_body_size 25m;
+
+    # Static SPA — serve apps/web/dist
+    root /var/www/rac-web;
+    index index.html;
+
+    # SPA routing fallback
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # API endpoints (Host backend)
+    location /api/ {
+        # Rate-limit only the auth endpoint
+        location /api/auth/login {
+            limit_req zone=rac_auth burst=5 nodelay;
+            proxy_pass http://127.0.0.1:3001;
+            include /etc/nginx/snippets/rac-proxy.conf;
+        }
+
+        # Server-Sent Events: disable buffering, long timeouts
+        location /api/stream {
+            proxy_pass http://127.0.0.1:3001;
+            proxy_http_version 1.1;
+            proxy_set_header Connection '';
+            proxy_buffering off;
+            proxy_cache off;
+            proxy_read_timeout 24h;
+            include /etc/nginx/snippets/rac-proxy.conf;
+        }
+
+        proxy_pass http://127.0.0.1:3001;
+        include /etc/nginx/snippets/rac-proxy.conf;
+    }
+
+    # WebSocket endpoint (native terminal, remote workers)
+    location /ws {
+        proxy_pass http://127.0.0.1:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_read_timeout 24h;
+        proxy_send_timeout 24h;
+        include /etc/nginx/snippets/rac-proxy.conf;
+    }
+}
+
+# ----------------------------------------------------------------------
+# Common proxy headers used in `include /etc/nginx/snippets/rac-proxy.conf;`
+# above are provided as a separate file: `docs/nginx-rac-proxy.snippet.conf`.
+# Copy it to /etc/nginx/snippets/rac-proxy.conf on the proxy host.

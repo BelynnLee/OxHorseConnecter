@@ -1,0 +1,75 @@
+.app-page-header {
+  box-shadow: 0 1px 0 var(--border-soft), 0 18px 46px -34px var(--shadow-elevated);
+}
+
+.app-sidebar {
+  background: var(--nav-bg, color-mix(in srgb, var(--background-base) 94%, transparent));
+}
+
+.page-shell {
+  gap: calc(1rem * var(--theme-spacing-mul, 1));
+}
+
+.scroll-area {
+  scrollbar-gutter: stable;
+}
+
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.card,
+.agent-panel,
+.agent-event-card,
+.agent-running-bar {
+  border-radius: var(--theme-radius);
+}
+
+.agent-panel {
+  background: var(--bg-surface-1);
+  border-color: var(--border-default);
+}
+
+.agent-message-prose,
+.agent-message-assistant,
+.agent-final-answer {
+  line-height: 1.72;
+}
+
+.agent-message-assistant,
+.agent-final-answer {
+  max-width: min(58rem, 100%);
+}
+
+.input-base {
+  min-height: 2.25rem;
+}
+
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+thead th {
+  white-space: nowrap;
+}
+
+tbody tr {
+  transition: background-color 140ms ease, color 140ms ease;
+}
+
+tbody tr:hover {
+  background: var(--bg-surface-1);
+}
+
+pre,
+code,
+.font-mono {
+  font-family: var(--font-mono);
+  font-variant-ligatures: none;
+}

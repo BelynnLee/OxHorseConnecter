@@ -1,0 +1,18 @@
+[Unit]
+Description=RAC Remote Worker
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/remote-agent-console
+Environment=NODE_ENV=production
+EnvironmentFile=/opt/remote-agent-console/.env
+ExecStart=/usr/bin/corepack pnpm --filter @rac/host remote:start
+Restart=always
+RestartSec=5
+StandardOutput=append:/var/log/rac-remote-worker.log
+StandardError=append:/var/log/rac-remote-worker.log
+
+[Install]
+WantedBy=multi-user.target

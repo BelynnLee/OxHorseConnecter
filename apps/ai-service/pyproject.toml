@@ -1,0 +1,16 @@
+[project]
+name = "codeagent-ai-service"
+version = "0.1.0"
+description = "Local AI service for CodeAgent Control Plane RAG, evaluation helpers, and failure analysis."
+requires-python = ">=3.11"
+dependencies = [
+  "chromadb>=0.5.0",
+  "fastapi>=0.111.0",
+  "pydantic>=2.7.0",
+  "pytest>=8.2.0",
+  "uvicorn[standard]>=0.30.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

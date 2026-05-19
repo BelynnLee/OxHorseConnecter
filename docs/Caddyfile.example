@@ -1,0 +1,72 @@
+# Remote Agent Console - Caddy Reverse Proxy Example
+#
+# Caddy auto-provisions Let's Encrypt certificates and forces HTTPS.
+# Replace `console.example.com` with your domain, then:
+#   caddy run --config Caddyfile
+#
+# Place built web assets at /var/www/rac-web (= apps/web/dist)
+# Host must run with TRUST_PROXY=true to honor X-Forwarded-* headers.
+
+console.example.com {
+    # Strict security headers
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Frame-Options "SAMEORIGIN"
+        X-Content-Type-Options "nosniff"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        # Hide server identity
+        -Server
+    }
+
+    # Rate-limit auth endpoint (requires caddy-ratelimit plugin)
+    # @login path /api/auth/login
+    # rate_limit @login {
+    #     zone   rac_auth
+    #     events 10
+    #     window 1m
+    # }
+
+    # SSE: long timeouts, no buffering
+    @sse path /api/stream*
+    handle @sse {
+        reverse_proxy 127.0.0.1:3001 {
+            flush_interval -1
+            transport http {
+                read_timeout  24h
+                write_timeout 24h
+            }
+        }
+    }
+
+    # WebSocket: native terminal, remote workers
+    @ws {
+        path /ws*
+        header Connection *Upgrade*
+        header Upgrade websocket
+    }
+    handle @ws {
+        reverse_proxy 127.0.0.1:3001 {
+            transport http {
+                read_timeout  24h
+                write_timeout 24h
+            }
+        }
+    }
+
+    # All other /api/* requests
+    handle /api/* {
+        reverse_proxy 127.0.0.1:3001
+    }
+
+    # Static SPA — apps/web/dist
+    handle {
+        root * /var/www/rac-web
+        try_files {path} /index.html
+        file_server
+    }
+
+    # Body size limit
+    request_body {
+        max_size 25MB
+    }
+}

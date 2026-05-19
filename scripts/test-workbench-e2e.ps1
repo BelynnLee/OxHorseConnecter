@@ -149,6 +149,7 @@ $env:ALLOWED_WORK_DIR = $root
 $env:ADMIN_USERNAME = $env:E2E_ADMIN_USERNAME
 $env:ADMIN_PASSWORD = $env:E2E_ADMIN_PASSWORD
 $env:JWT_SECRET = $env:E2E_JWT_SECRET
+$env:PROVIDER_SECRET_KEY = 'workbench-e2e-provider-secret-2026-with-enough-length'
 $env:VITE_API_URL = "http://127.0.0.1:$($env:E2E_HOST_PORT)"
 $env:PW_TEST_SCREENSHOT_NO_FONTS_READY = '1'
 

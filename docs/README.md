@@ -29,6 +29,7 @@
 - [AI service README](../apps/ai-service/README.md)：可选 Python 服务说明。
 - [E2E README](../tests/e2e/README.md) 和 [integration README](../tests/integration/README.md)：测试套件说明。
 
-## 发布材料
+## 历史归档
 
-- [Claude Code Workbench MVP 发布材料](releases/claude-code-workbench-mvp/README.md)：MVP 里程碑的 release notes 和 acceptance record。
+- [归档目录](archive/README.md)：不再作为当前事实的 PRD、阶段设计、JD mapping 和非功能路线记录。
+- [Claude Code Workbench MVP 发布材料](releases/claude-code-workbench-mvp/README.md)：MVP 里程碑的 release notes、demo script、checklist 和 acceptance record。

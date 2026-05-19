@@ -543,7 +543,11 @@ test('Agent Workbench v2 product inspector actions work with the mock adapter', 
 test('Agent Workbench v2 real adapter loads the protected workbench route', async ({ page }) => {
   await login(page);
   const readyDevice = await getReadyDevice(page);
-  await gotoApp(page, `/workbench?deviceId=${encodeURIComponent(readyDevice.id)}`);
+  const routeParams = new URLSearchParams({
+    deviceId: readyDevice.id,
+    projectPath: readyDevice.workRoot,
+  });
+  await gotoApp(page, `/workbench?${routeParams.toString()}`);
 
   await expect(page.getByTestId('agent-workbench-v2')).toBeVisible();
   await expect(page.getByTestId('session-sidebar')).toBeVisible();
@@ -554,7 +558,7 @@ test('Agent Workbench v2 real adapter loads the protected workbench route', asyn
   await openComposerAdvancedOptions(page);
   await expect(page.getByTestId('header-provider-select')).toBeVisible();
   await expect(page.getByText(/stream:/i)).toBeVisible();
-  const expectedProjectPath = readyDevice.workRoot || process.env.E2E_ALLOWED_WORK_DIR;
+  const expectedProjectPath = readyDevice.workRoot;
   const projectPathInput = page.getByTestId('header-project-path');
   if (expectedProjectPath) {
     await expectPathValue(projectPathInput, expectedProjectPath);

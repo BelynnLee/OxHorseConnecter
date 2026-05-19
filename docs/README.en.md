@@ -40,6 +40,7 @@ English versions are currently maintained for the GitHub-facing entry documents:
 
 Other detailed documents may still be Chinese-only. When they are changed, either add an English `.en.md` file or clearly mark the English translation status.
 
-## Release Materials
+## Historical Archive
 
-- [Claude Code Workbench MVP release material](releases/claude-code-workbench-mvp/README.md): release notes and acceptance record for the MVP milestone.
+- [Archive index](archive/README.md): PRDs, phase designs, JD mapping, and non-functional roadmap records that are no longer current facts.
+- [Claude Code Workbench MVP release material](releases/claude-code-workbench-mvp/README.md): release notes, demo script, checklist, and acceptance record for the MVP milestone.

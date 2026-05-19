@@ -295,7 +295,10 @@ function ComposerSettings({
   const extraDirBrowseStart = extraDirs.length
     ? extraDirs[extraDirs.length - 1]
     : projectBrowseStart;
-  const browseDeviceId = apiSource === 'mock' ? undefined : deviceId || undefined;
+  const browseDeviceId =
+    apiSource === 'mock' || selectedDevice?.bridgeStatus !== 'connected'
+      ? undefined
+      : deviceId || undefined;
   const appendExtraDir = (pathValue: string) => {
     updateRuntime({ extraDirs: appendUniquePath(extraDirs, pathValue) });
   };

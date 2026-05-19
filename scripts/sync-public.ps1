@@ -116,6 +116,8 @@ if ($pending) {
   Write-Host "No public branch changes to commit."
 }
 
+Invoke-Git clean -fd
+
 Invoke-Git push -u $GiteaRemote $PublicBranch
 
 if ($Push) {

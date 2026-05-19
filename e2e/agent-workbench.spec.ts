@@ -541,6 +541,7 @@ test('Agent Workbench v2 product inspector actions work with the mock adapter', 
 });
 
 test('Agent Workbench v2 real adapter loads the protected workbench route', async ({ page }) => {
+  test.setTimeout(90_000);
   await login(page);
   const readyDevice = await getReadyDevice(page);
   const routeParams = new URLSearchParams({

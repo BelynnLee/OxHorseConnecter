@@ -1,3 +1,8 @@
+param(
+  [string]$Spec = 'e2e/agent-workbench-mock.spec.ts',
+  [switch]$UseDevServer
+)
+
 $ErrorActionPreference = 'Stop'
 
 $root = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
@@ -9,8 +14,11 @@ $hostStderr = Join-Path $dataDir 'workbench-e2e-host.err.log'
 $webStdout = Join-Path $dataDir 'workbench-e2e-web.log'
 $webStderr = Join-Path $dataDir 'workbench-e2e-web.err.log'
 $projectDir = Join-Path $dataDir 'workbench-e2e-projects'
+$testResultsDir = Join-Path $root 'test-results'
+$playwrightReportDir = Join-Path $root 'playwright-report'
 $hostProc = $null
 $webProc = $null
+$success = $false
 
 function Remove-E2EArtifacts {
   foreach ($path in @(
@@ -21,7 +29,9 @@ function Remove-E2EArtifacts {
     $hostStderr,
     $webStdout,
     $webStderr,
-    $projectDir
+    $projectDir,
+    $testResultsDir,
+    $playwrightReportDir
   )) {
     Remove-Item -LiteralPath $path -Force -Recurse -ErrorAction SilentlyContinue
   }
@@ -129,6 +139,11 @@ function Resolve-BrowserExecutable {
 
 Remove-E2EArtifacts
 
+$specPath = Join-Path $root $Spec
+if (-not (Test-Path -LiteralPath $specPath)) {
+  throw "Playwright spec not found: $Spec"
+}
+
 $hostPort = Get-FreePort -PreferredPort 3201
 $webPort = Get-FreePort -PreferredPort 5177 -Exclude @($hostPort)
 
@@ -166,6 +181,7 @@ try {
   Invoke-Checked { corepack pnpm --filter '@rac/security' build }
   Invoke-Checked { corepack pnpm --filter '@rac/executors' build }
   Invoke-Checked { corepack pnpm --filter '@rac/host' build }
+  Invoke-Checked { corepack pnpm --filter '@rac/web' build }
 
   $hostProc = Start-Process -FilePath node `
     -ArgumentList 'dist/index.js' `
@@ -177,8 +193,9 @@ try {
 
   Wait-ForUrl -Label 'Workbench host' -Url "http://127.0.0.1:$($env:E2E_HOST_PORT)/api/health" -TimeoutMs 90000
 
+  $webMode = if ($UseDevServer) { 'dev' } else { 'preview' }
   $webProc = Start-Process -FilePath corepack `
-    -ArgumentList @('pnpm', '--filter', '@rac/web', 'dev', '--host', '127.0.0.1', '--port', $env:E2E_WEB_PORT, '--strictPort') `
+    -ArgumentList @('pnpm', '--filter', '@rac/web', $webMode, '--host', '127.0.0.1', '--port', $env:E2E_WEB_PORT, '--strictPort') `
     -WorkingDirectory $root `
     -RedirectStandardOutput $webStdout `
     -RedirectStandardError $webStderr `
@@ -187,7 +204,8 @@ try {
 
   Wait-ForUrl -Label 'Workbench web' -Url "http://127.0.0.1:$($env:E2E_WEB_PORT)" -TimeoutMs 90000
 
-  Invoke-Checked { corepack pnpm exec playwright test e2e/agent-workbench.spec.ts }
+  Invoke-Checked { corepack pnpm exec playwright test $Spec }
+  $success = $true
 }
 finally {
   if ($webProc -and -not $webProc.HasExited) {
@@ -197,5 +215,9 @@ finally {
     Stop-ProcessTree -ProcessId $hostProc.Id
   }
   Start-Sleep -Milliseconds 500
-  Remove-E2EArtifacts
+  if ($success) {
+    Remove-E2EArtifacts
+  } else {
+    Write-Host "E2E artifacts kept for debugging under data/, test-results/, and playwright-report/."
+  }
 }

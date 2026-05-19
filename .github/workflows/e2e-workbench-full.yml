@@ -1,21 +1,19 @@
-name: CI
+name: Workbench Full E2E
 
 on:
-  push:
-    branches:
-      - main
-      - master
-  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: '30 18 * * *'
 
 concurrency:
-  group: ci-${{ github.ref }}
+  group: workbench-full-e2e-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  verify:
-    name: Verify
+  full-e2e:
+    name: Full Workbench E2E
     runs-on: windows-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
 
     steps:
       - name: Checkout
@@ -36,20 +34,17 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Security audit (production dependencies, high+ severity)
-        run: pnpm audit --prod --audit-level=high
-
       - name: Install Playwright Chromium
         run: pnpm exec playwright install chromium
 
-      - name: Run release readiness checks
-        run: pnpm run ci
+      - name: Run full Workbench checks
+        run: pnpm run ci:full
 
-      - name: Upload CI debug artifacts
+      - name: Upload E2E debug artifacts
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: ci-debug-artifacts
+          name: workbench-full-e2e-debug-artifacts
           if-no-files-found: ignore
           path: |
             data/workbench-e2e-*.log

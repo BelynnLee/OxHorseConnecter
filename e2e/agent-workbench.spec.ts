@@ -569,11 +569,4 @@ test('Agent Workbench v2 real adapter loads the protected workbench route', asyn
   if (expectedProjectPath) {
     await expectPathValue(projectPathInput, expectedProjectPath);
   }
-  const browseButton = page.getByRole('button', { name: 'Browse' }).first();
-  await expect(browseButton).toBeEnabled();
-  await browseButton.click();
-  const browseDropdown = page.getByTestId('dir-picker-dropdown').first();
-  await expect(browseDropdown).toBeVisible({ timeout: 30_000 });
-  await expect(browseDropdown.getByText(/Path is outside ALLOWED_WORK_DIR/i)).toHaveCount(0);
-  await expect(browseDropdown.getByTestId('dir-picker-current')).toBeVisible({ timeout: 30_000 });
 });

@@ -65,7 +65,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,mjs,json,md}\" --ignore-path .gitignore",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,json,md}\" --ignore-path .gitignore",
     "ci": "pnpm verify:mvp && pnpm lint && pnpm test:executor-args && pnpm test:control-plane && pnpm test:prd-acceptance && pnpm test:security-hardening && pnpm test:usage-accounting && pnpm test:agent-route-utils && pnpm test:agent-native-routes && pnpm test:agent-event-mapper && pnpm test:codex-event-parser && pnpm test:claude-code-stream-parser && pnpm test:session-export && pnpm test:session-task-events && pnpm test:session-permission && pnpm test:session-discard && pnpm test:workbench-timeline && pnpm test:command-result-ui && pnpm test:workbench-api-adapters && pnpm test:inspector-utils && pnpm test:native-terminal-auth && pnpm test:native-terminal-protocol && pnpm test:native-terminal-shell && pnpm test:native-terminal-input-history && pnpm test:native-terminal-runtime-state && pnpm test:config-page-schema && pnpm test:log-file && pnpm test:time-format && pnpm test:telegram-gateway && pnpm test:integration && pnpm test:e2e:workbench:mock",
-    "ci:full": "pnpm ci && pnpm test:e2e:workbench:real",
+    "ci:full": "pnpm run ci && pnpm run test:e2e:workbench:real",
     "test": "pnpm test:integration",
     "db:backup": "powershell -ExecutionPolicy Bypass -File .\\scripts\\backup-db.ps1",
     "health:check": "powershell -ExecutionPolicy Bypass -File .\\scripts\\health-check.ps1",
